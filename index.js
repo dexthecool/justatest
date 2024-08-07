@@ -1,4 +1,40 @@
 class SystemInfo {
+    constructor() {
+        this.ambientLightSensor = null;
+        this.gyroscope = null;
+        this.accelerometer = null;
+        this.temperatureSensor = null;
+        this.pressureSensor = null;
+        this.initSensors();
+    }
+
+    initSensors() {
+        if ('AmbientLightSensor' in window) {
+            this.ambientLightSensor = new AmbientLightSensor();
+            this.ambientLightSensor.start();
+        }
+
+        if ('Gyroscope' in window) {
+            this.gyroscope = new Gyroscope({frequency: 60});
+            this.gyroscope.start();
+        }
+
+        if ('Accelerometer' in window) {
+            this.accelerometer = new Accelerometer({frequency: 60});
+            this.accelerometer.start();
+        }
+
+        if ('TemperatureSensor' in window) {
+            this.temperatureSensor = new TemperatureSensor();
+            this.temperatureSensor.start();
+        }
+
+        if ('PressureSensor' in window) {
+            this.pressureSensor = new PressureSensor();
+            this.pressureSensor.start();
+        }
+    }
+
     getInfo() {
         return {
             id: 'systemInfo',
@@ -109,13 +145,11 @@ class SystemInfo {
 
     getAmbientLight() {
         return new Promise((resolve, reject) => {
-            if ('AmbientLightSensor' in window) {
-                const sensor = new AmbientLightSensor();
-                sensor.addEventListener('reading', () => {
-                    resolve(sensor.illuminance);
+            if (this.ambientLightSensor) {
+                this.ambientLightSensor.addEventListener('reading', () => {
+                    resolve(this.ambientLightSensor.illuminance);
                 });
-                sensor.addEventListener('error', reject);
-                sensor.start();
+                this.ambientLightSensor.addEventListener('error', reject);
             } else {
                 reject('AmbientLightSensor not supported');
             }
@@ -124,19 +158,17 @@ class SystemInfo {
 
     getGyro(args) {
         return new Promise((resolve, reject) => {
-            if ('Gyroscope' in window) {
-                const sensor = new Gyroscope();
-                sensor.addEventListener('reading', () => {
+            if (this.gyroscope) {
+                this.gyroscope.addEventListener('reading', () => {
                     if (args.AXIS === 'x') {
-                        resolve(sensor.x);
+                        resolve(this.gyroscope.x);
                     } else if (args.AXIS === 'y') {
-                        resolve(sensor.y);
+                        resolve(this.gyroscope.y);
                     } else if (args.AXIS === 'z') {
-                        resolve(sensor.z);
+                        resolve(this.gyroscope.z);
                     }
                 });
-                sensor.addEventListener('error', reject);
-                sensor.start();
+                this.gyroscope.addEventListener('error', reject);
             } else {
                 reject('Gyroscope not supported');
             }
@@ -145,19 +177,17 @@ class SystemInfo {
 
     getAccelerometer(args) {
         return new Promise((resolve, reject) => {
-            if ('Accelerometer' in window) {
-                const sensor = new Accelerometer();
-                sensor.addEventListener('reading', () => {
+            if (this.accelerometer) {
+                this.accelerometer.addEventListener('reading', () => {
                     if (args.AXIS === 'x') {
-                        resolve(sensor.x);
+                        resolve(this.accelerometer.x);
                     } else if (args.AXIS === 'y') {
-                        resolve(sensor.y);
+                        resolve(this.accelerometer.y);
                     } else if (args.AXIS === 'z') {
-                        resolve(sensor.z);
+                        resolve(this.accelerometer.z);
                     }
                 });
-                sensor.addEventListener('error', reject);
-                sensor.start();
+                this.accelerometer.addEventListener('error', reject);
             } else {
                 reject('Accelerometer not supported');
             }
@@ -166,13 +196,11 @@ class SystemInfo {
 
     getTemperature() {
         return new Promise((resolve, reject) => {
-            if ('TemperatureSensor' in window) {
-                const sensor = new TemperatureSensor();
-                sensor.addEventListener('reading', () => {
-                    resolve(sensor.temperature);
+            if (this.temperatureSensor) {
+                this.temperatureSensor.addEventListener('reading', () => {
+                    resolve(this.temperatureSensor.temperature);
                 });
-                sensor.addEventListener('error', reject);
-                sensor.start();
+                this.temperatureSensor.addEventListener('error', reject);
             } else {
                 reject('TemperatureSensor not supported');
             }
@@ -181,13 +209,11 @@ class SystemInfo {
 
     getPressure() {
         return new Promise((resolve, reject) => {
-            if ('PressureSensor' in window) {
-                const sensor = new PressureSensor();
-                sensor.addEventListener('reading', () => {
-                    resolve(sensor.pressure);
+            if (this.pressureSensor) {
+                this.pressureSensor.addEventListener('reading', () => {
+                    resolve(this.pressureSensor.pressure);
                 });
-                sensor.addEventListener('error', reject);
-                sensor.start();
+                this.pressureSensor.addEventListener('error', reject);
             } else {
                 reject('PressureSensor not supported');
             }
