@@ -1,0 +1,26 @@
+{
+  "id": "systemInfo",
+  "name": "System Info",
+  "blocks": [
+    {
+      "opcode": "getScreenWidth",
+      "blockType": "reporter",
+      "text": "screen width"
+    },
+    {
+      "opcode": "getScreenHeight",
+      "blockType": "reporter",
+      "text": "screen height"
+    },
+    {
+      "opcode": "getRefreshRate",
+      "blockType": "reporter",
+      "text": "refresh rate"
+    },
+    {
+      "opcode": "getBatteryPercentage",
+      "blockType": "reporter",
+      "text": "battery percentage"
+    }
+  ]
+}
