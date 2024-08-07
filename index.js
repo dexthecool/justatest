@@ -9,29 +9,64 @@ class SystemInfo {
     }
 
     initSensors() {
+        // Initialize Ambient Light Sensor
         if ('AmbientLightSensor' in window) {
-            this.ambientLightSensor = new AmbientLightSensor();
-            this.ambientLightSensor.start();
+            try {
+                this.ambientLightSensor = new AmbientLightSensor();
+                this.ambientLightSensor.start();
+            } catch (error) {
+                console.error('AmbientLightSensor initialization failed:', error);
+            }
+        } else {
+            console.warn('AmbientLightSensor not supported on this device.');
         }
 
+        // Initialize Gyroscope
         if ('Gyroscope' in window) {
-            this.gyroscope = new Gyroscope({frequency: 60});
-            this.gyroscope.start();
+            try {
+                this.gyroscope = new Gyroscope({frequency: 60});
+                this.gyroscope.start();
+            } catch (error) {
+                console.error('Gyroscope initialization failed:', error);
+            }
+        } else {
+            console.warn('Gyroscope not supported on this device.');
         }
 
+        // Initialize Accelerometer
         if ('Accelerometer' in window) {
-            this.accelerometer = new Accelerometer({frequency: 60});
-            this.accelerometer.start();
+            try {
+                this.accelerometer = new Accelerometer({frequency: 60});
+                this.accelerometer.start();
+            } catch (error) {
+                console.error('Accelerometer initialization failed:', error);
+            }
+        } else {
+            console.warn('Accelerometer not supported on this device.');
         }
 
+        // Initialize Temperature Sensor
         if ('TemperatureSensor' in window) {
-            this.temperatureSensor = new TemperatureSensor();
-            this.temperatureSensor.start();
+            try {
+                this.temperatureSensor = new TemperatureSensor();
+                this.temperatureSensor.start();
+            } catch (error) {
+                console.error('TemperatureSensor initialization failed:', error);
+            }
+        } else {
+            console.warn('TemperatureSensor not supported on this device.');
         }
 
+        // Initialize Pressure Sensor
         if ('PressureSensor' in window) {
-            this.pressureSensor = new PressureSensor();
-            this.pressureSensor.start();
+            try {
+                this.pressureSensor = new PressureSensor();
+                this.pressureSensor.start();
+            } catch (error) {
+                console.error('PressureSensor initialization failed:', error);
+            }
+        } else {
+            console.warn('PressureSensor not supported on this device.');
         }
     }
 
@@ -146,10 +181,9 @@ class SystemInfo {
     getAmbientLight() {
         return new Promise((resolve, reject) => {
             if (this.ambientLightSensor) {
-                this.ambientLightSensor.addEventListener('reading', () => {
-                    resolve(this.ambientLightSensor.illuminance);
-                });
-                this.ambientLightSensor.addEventListener('error', reject);
+                const handleReading = () => resolve(this.ambientLightSensor.illuminance);
+                this.ambientLightSensor.addEventListener('reading', handleReading, { once: true });
+                this.ambientLightSensor.addEventListener('error', reject, { once: true });
             } else {
                 reject('AmbientLightSensor not supported');
             }
@@ -159,7 +193,7 @@ class SystemInfo {
     getGyro(args) {
         return new Promise((resolve, reject) => {
             if (this.gyroscope) {
-                this.gyroscope.addEventListener('reading', () => {
+                const handleReading = () => {
                     if (args.AXIS === 'x') {
                         resolve(this.gyroscope.x);
                     } else if (args.AXIS === 'y') {
@@ -167,8 +201,9 @@ class SystemInfo {
                     } else if (args.AXIS === 'z') {
                         resolve(this.gyroscope.z);
                     }
-                });
-                this.gyroscope.addEventListener('error', reject);
+                };
+                this.gyroscope.addEventListener('reading', handleReading, { once: true });
+                this.gyroscope.addEventListener('error', reject, { once: true });
             } else {
                 reject('Gyroscope not supported');
             }
@@ -178,7 +213,7 @@ class SystemInfo {
     getAccelerometer(args) {
         return new Promise((resolve, reject) => {
             if (this.accelerometer) {
-                this.accelerometer.addEventListener('reading', () => {
+                const handleReading = () => {
                     if (args.AXIS === 'x') {
                         resolve(this.accelerometer.x);
                     } else if (args.AXIS === 'y') {
@@ -186,8 +221,9 @@ class SystemInfo {
                     } else if (args.AXIS === 'z') {
                         resolve(this.accelerometer.z);
                     }
-                });
-                this.accelerometer.addEventListener('error', reject);
+                };
+                this.accelerometer.addEventListener('reading', handleReading, { once: true });
+                this.accelerometer.addEventListener('error', reject, { once: true });
             } else {
                 reject('Accelerometer not supported');
             }
@@ -197,10 +233,9 @@ class SystemInfo {
     getTemperature() {
         return new Promise((resolve, reject) => {
             if (this.temperatureSensor) {
-                this.temperatureSensor.addEventListener('reading', () => {
-                    resolve(this.temperatureSensor.temperature);
-                });
-                this.temperatureSensor.addEventListener('error', reject);
+                const handleReading = () => resolve(this.temperatureSensor.temperature);
+                this.temperatureSensor.addEventListener('reading', handleReading, { once: true });
+                this.temperatureSensor.addEventListener('error', reject, { once: true });
             } else {
                 reject('TemperatureSensor not supported');
             }
@@ -210,10 +245,9 @@ class SystemInfo {
     getPressure() {
         return new Promise((resolve, reject) => {
             if (this.pressureSensor) {
-                this.pressureSensor.addEventListener('reading', () => {
-                    resolve(this.pressureSensor.pressure);
-                });
-                this.pressureSensor.addEventListener('error', reject);
+                const handleReading = () => resolve(this.pressureSensor.pressure);
+                this.pressureSensor.addEventListener('reading', handleReading, { once: true });
+                this.pressureSensor.addEventListener('error', reject, { once: true });
             } else {
                 reject('PressureSensor not supported');
             }
